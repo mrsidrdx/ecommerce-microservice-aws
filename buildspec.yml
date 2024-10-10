@@ -19,6 +19,7 @@ phases:
     commands:
       - echo "Running tests and zipping Lambda functions..."
       - mkdir -p dist
+      - touch successful_tests.txt
       - |
         for func in functions/*; do
           if [ -d "$func" ]; then
@@ -34,23 +35,26 @@ phases:
                 cd "$func" || exit 1
                 zip -r "../../dist/$func_name.zip" index.js ../../node_modules
               )
-              if [ $? -ne 0 ]; then
+              if [ $? -eq 0 ]; then
+                echo "$func_name" >> successful_tests.txt
+              else
                 echo "Error zipping $func_name"
                 exit 1
               fi
-              echo "$func_name" >> ../successful_tests.txt
             else
               echo "Tests failed for $func_name. Skipping deployment."
             fi
           fi
         done
+      - echo "Functions that passed tests:"
+      - cat successful_tests.txt
   post_build:
     commands:
       - echo "Uploading to S3..."
       - aws s3 cp dist s3://${S3_BUCKET_NAME} --recursive
       - echo "Updating Lambda functions..."
       - |
-        if [ -f successful_tests.txt ]; then
+        if [ -s successful_tests.txt ]; then
           while IFS= read -r func_name
           do
             echo "Updating $func_name..."
