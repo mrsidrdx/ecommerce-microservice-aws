@@ -1,13 +1,12 @@
 const AWS = require('aws-sdk');
 const dynamodb = new AWS.DynamoDB.DocumentClient();
-const PRODUCTS_TABLE = process.env.PRODUCTS_TABLE;
 
 exports.handler = async (event) => {
   console.log('Processing event:', event);
   const { ProductId } = event.pathParameters || {};
 
   const params = {
-    TableName: PRODUCTS_TABLE,
+    TableName: process.env.PRODUCTS_TABLE,
     Key: {
       ProductId: ProductId,
     },
