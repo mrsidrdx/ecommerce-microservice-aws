@@ -12,13 +12,19 @@ phases:
     commands:
       - echo "Zipping Lambda functions..."
       - mkdir -p dist
-      - for func in functions/*; do
+      - |
+        for func in functions/*; do
           if [ -d "$func" ]; then
             func_name=$(basename "$func")
             echo "Processing $func_name..."
-            cd "$func"
-            zip -r "../../dist/$func_name.zip" index.js ../../node_modules
-            cd ../..
+            (
+              cd "$func" || exit 1
+              zip -r "../../dist/$func_name.zip" index.js ../../node_modules
+            )
+            if [ $? -ne 0 ]; then
+              echo "Error zipping $func_name"
+              exit 1
+            fi
           fi
         done
   post_build:
@@ -26,9 +32,14 @@ phases:
       - echo "Uploading to S3..."
       - aws s3 cp dist s3://${S3_BUCKET_NAME} --recursive
       - echo "Updating Lambda functions..."
-      - for zip in dist/*.zip; do
+      - |
+        for zip in dist/*.zip; do
           func_name=$(basename "$zip" .zip)
           aws lambda update-function-code --function-name ${func_name} --s3-bucket ${S3_BUCKET_NAME} --s3-key $(basename "$zip")
+          if [ $? -ne 0 ]; then
+            echo "Error updating Lambda function $func_name"
+            exit 1
+          fi
         done
 
 artifacts:
