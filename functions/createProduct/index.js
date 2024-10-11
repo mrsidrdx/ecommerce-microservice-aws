@@ -26,6 +26,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 201,
       body: JSON.stringify({
+        __typename: "CreateProductSuccess",
         message: "Product created successfully",
         ProductId,
       }),
@@ -34,7 +35,7 @@ exports.handler = async (event) => {
     console.error("Error creating product:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not create product" }),
+      body: JSON.stringify({ __typename: 'APIError', error: "Could not create product" }),
     };
   }
 };

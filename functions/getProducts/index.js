@@ -48,6 +48,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
+        __typename: "ProductsList",
         products: result.Items,
         lastKey: result.LastEvaluatedKey
           ? JSON.stringify(result.LastEvaluatedKey)
@@ -58,7 +59,7 @@ exports.handler = async (event) => {
     console.error("Error fetching products:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not retrieve products" }),
+      body: JSON.stringify({ __typename: 'APIError', error: "Could not retrieve products" }),
     };
   }
 };

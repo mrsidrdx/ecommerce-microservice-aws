@@ -38,7 +38,10 @@ describe("updateTaxonomy Lambda function", () => {
 
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body);
-    expect(body).toEqual(mockUpdatedItem);
+    expect(body).toEqual({
+      __typename: "Taxonomy",
+      ...mockUpdatedItem,
+    });
   });
 
   test("should return 500 when an error occurs", async () => {

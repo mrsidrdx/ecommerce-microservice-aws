@@ -22,6 +22,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 201,
       body: JSON.stringify({
+        __typename: "CreateTaxonomySuccess",
         message: "Taxonomy created successfully",
         TaxonomyId,
       }),
@@ -30,7 +31,7 @@ exports.handler = async (event) => {
     console.error("Error creating taxonomy:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not create taxonomy" }),
+      body: JSON.stringify({ __typename: 'APIError', error: "Could not create taxonomy" }),
     };
   }
 };

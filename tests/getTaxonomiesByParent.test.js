@@ -27,10 +27,13 @@ describe("getTaxonomiesByParent Lambda function", () => {
     };
     const result = await handler(event);
     expect(result.statusCode).toBe(200);
-    expect(JSON.parse(result.body)).toEqual([
-      { TaxonomyId: "taxonomy1", ParentId: "valid-parent-id" },
-      { TaxonomyId: "taxonomy2", ParentId: "valid-parent-id" },
-    ]);
+    expect(JSON.parse(result.body)).toEqual({
+      __typename: "TaxonomyList",
+      taxonomies: [
+        { TaxonomyId: "taxonomy1", ParentId: "valid-parent-id" },
+        { TaxonomyId: "taxonomy2", ParentId: "valid-parent-id" },
+      ],
+    });
   });
 
   test("should return 200 and an empty array when no taxonomies match ParentId", async () => {
@@ -39,7 +42,10 @@ describe("getTaxonomiesByParent Lambda function", () => {
     };
     const result = await handler(event);
     expect(result.statusCode).toBe(200);
-    expect(JSON.parse(result.body)).toEqual([]);
+    expect(JSON.parse(result.body)).toEqual({
+      __typename: "TaxonomyList",
+      taxonomies: [],
+    });
   });
 
   test("should return 500 when an error occurs", async () => {
@@ -53,6 +59,7 @@ describe("getTaxonomiesByParent Lambda function", () => {
     const result = await handler(event);
     expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body)).toEqual({
+      __typename: "APIError",
       error: "Could not query taxonomies",
     });
   });

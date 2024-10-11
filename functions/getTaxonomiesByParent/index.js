@@ -17,13 +17,16 @@ exports.handler = async (event) => {
     const { Items } = await dynamodb.query(params).promise();
     return {
       statusCode: 200,
-      body: JSON.stringify(Items),
+      body: JSON.stringify({
+        __typename: "TaxonomyList",
+        taxonomies: Items,
+      }),
     };
   } catch (error) {
     console.error("Error querying taxonomies by ParentId:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not query taxonomies" }),
+      body: JSON.stringify({ __typename: 'APIError', error: "Could not query taxonomies" }),
     };
   }
 };

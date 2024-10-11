@@ -16,19 +16,28 @@ exports.handler = async (event) => {
     if (Item) {
       return {
         statusCode: 200,
-        body: JSON.stringify(Item),
+        body: JSON.stringify({
+          __typename: "Taxonomy",
+          ...Item,
+        }),
       };
     } else {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "Taxonomy not found" }),
+        body: JSON.stringify({
+          __typename: "APIError",
+          error: "Taxonomy not found",
+        }),
       };
     }
   } catch (error) {
     console.error("Error retrieving taxonomy:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not retrieve taxonomy" }),
+      body: JSON.stringify({
+        __typename: "APIError",
+        error: "Could not retrieve taxonomy",
+      }),
     };
   }
 };

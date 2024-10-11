@@ -30,13 +30,19 @@ exports.handler = async (event) => {
     const { Attributes } = await dynamodb.update(params).promise();
     return {
       statusCode: 200,
-      body: JSON.stringify(Attributes),
+      body: JSON.stringify({
+        __typename: "Taxonomy",
+        ...Attributes,
+      }),
     };
   } catch (error) {
     console.error("Error updating taxonomy:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not update taxonomy" }),
+      body: JSON.stringify({
+        __typename: "APIError",
+        error: "Could not update taxonomy",
+      }),
     };
   }
 };

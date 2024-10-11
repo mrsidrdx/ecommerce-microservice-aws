@@ -21,6 +21,7 @@ describe("deleteTaxonomy Lambda function", () => {
     const result = await handler(event);
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body)).toEqual({
+      __typename: "DeleteResponse",
       message: "Taxonomy deleted successfully",
     });
   });
@@ -34,6 +35,7 @@ describe("deleteTaxonomy Lambda function", () => {
     const result = await handler(event);
     expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body)).toEqual({
+      __typename: 'APIError',
       error: "Could not delete taxonomy",
     });
   });

@@ -34,7 +34,10 @@ describe("getTaxonomy Lambda function", () => {
 
     expect(result.statusCode).toBe(200);
     const body = JSON.parse(result.body);
-    expect(body).toEqual(mockItem);
+    expect(body).toEqual({
+      __typename: "Taxonomy",
+      ...mockItem,
+    });
   });
 
   test("should return 404 when taxonomy is not found", async () => {
