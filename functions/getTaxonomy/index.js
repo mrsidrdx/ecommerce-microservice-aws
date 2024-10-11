@@ -1,16 +1,13 @@
 const AWS = require("aws-sdk");
 
 exports.handler = async (event) => {
-  console.log("Processing event:", event);
   const dynamodb = new AWS.DynamoDB.DocumentClient();
-  const { ProductId } = JSON.parse(
-    event.arguments || {}
-  );
+  const { TaxonomyId } = JSON.parse(event.arguments || {});
 
   const params = {
-    TableName: process.env.PRODUCTS_TABLE,
+    TableName: process.env.TAXONOMY_TABLE,
     Key: {
-      ProductId: ProductId,
+      TaxonomyId: TaxonomyId,
     },
   };
 
@@ -24,14 +21,14 @@ exports.handler = async (event) => {
     } else {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: "Product not found" }),
+        body: JSON.stringify({ error: "Taxonomy not found" }),
       };
     }
   } catch (error) {
-    console.error("Error fetching product:", error);
+    console.error("Error retrieving taxonomy:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Could not retrieve product" }),
+      body: JSON.stringify({ error: "Could not retrieve taxonomy" }),
     };
   }
 };

@@ -156,7 +156,9 @@ app.get("/products", async (req, res) => {
   // Only add FilterExpression if filters exist
   if (filterExpressions.length > 0) {
     params.FilterExpression = filterExpressions.join(" AND ");
-    params.ExpressionAttributeNames = expressionAttributeNames;
+    if (Object.keys(expressionAttributeNames).length > 0) {
+      params.ExpressionAttributeNames = expressionAttributeNames;
+    }
     params.ExpressionAttributeValues = expressionAttributeValues;
   }
 

@@ -19,7 +19,7 @@ describe("getProduct Lambda function", () => {
   });
 
   test("should return 200 and product data when product exists", async () => {
-    const event = { pathParameters: { ProductId: "exist" } };
+    const event = { arguments: JSON.stringify({ ProductId: "exist" }) };
     const result = await handler(event);
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body)).toEqual({
@@ -29,7 +29,7 @@ describe("getProduct Lambda function", () => {
   });
 
   test("should return 404 when product does not exist", async () => {
-    const event = { pathParameters: { ProductId: "nonexistent" } };
+    const event = { arguments: JSON.stringify({ ProductId: "nonexistent" }) };
     const result = await handler(event);
     expect(result.statusCode).toBe(404);
     expect(JSON.parse(result.body)).toEqual({ error: "Product not found" });
@@ -40,7 +40,7 @@ describe("getProduct Lambda function", () => {
     AWS.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
       callback(new Error("DynamoDB error"));
     });
-    const event = { pathParameters: { ProductId: "exist" } };
+    const event = { arguments: JSON.stringify({ ProductId: "exist" }) };
     const result = await handler(event);
     expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body)).toEqual({
