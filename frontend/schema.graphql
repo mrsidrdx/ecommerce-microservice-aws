@@ -1,0 +1,91 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+union CreateProductResult = APIError | CreateProductSuccess
+
+union CreateTaxonomyResult = APIError | CreateTaxonomySuccess
+
+union DeleteProductResult = APIError | DeleteResponse
+
+union DeleteTaxonomyResult = APIError | DeleteResponse
+
+#  Result Unions
+union GetProductResult = APIError | Product
+
+union GetProductsResult = APIError | ProductsList
+
+union GetTaxonomiesByParentResult = APIError | TaxonomyList
+
+union GetTaxonomyResult = APIError | Taxonomy
+
+union UpdateProductResult = APIError | Product
+
+union UpdateTaxonomyResult = APIError | Taxonomy
+
+#  Types
+type APIError {
+  error: String!
+}
+
+type CreateProductSuccess {
+  ProductId: String!
+  message: String!
+}
+
+type CreateTaxonomySuccess {
+  TaxonomyId: String!
+  message: String!
+}
+
+type DeleteResponse {
+  message: String!
+}
+
+#  Mutations
+type Mutation {
+  createProduct(Category: String!, Description: String, Name: String!, Price: Float!, ProductId: ID!, Stock: Int!): CreateProductResult!
+  createTaxonomy(Description: String, Name: String!, ParentId: ID, TaxonomyId: ID!, Type: String!): CreateTaxonomyResult!
+  deleteProduct(ProductId: ID!): DeleteProductResult!
+  deleteTaxonomy(TaxonomyId: ID!): DeleteTaxonomyResult!
+  updateProduct(Category: String, Description: String, Name: String, Price: Float, ProductId: ID!, Stock: Int): UpdateProductResult!
+  updateTaxonomy(Description: String, Name: String, ParentId: ID, TaxonomyId: ID!, Type: String): UpdateTaxonomyResult!
+}
+
+type Product {
+  Category: String!
+  CreatedAt: AWSDateTime!
+  Description: String
+  Name: String!
+  Price: Float!
+  ProductId: ID!
+  Stock: Int!
+  UpdatedAt: AWSDateTime!
+}
+
+type ProductsList {
+  lastKey: String
+  products: [Product]!
+}
+
+#  Queries
+type Query {
+  getProduct(ProductId: ID!): GetProductResult!
+  getProducts(Category: String, Name: String, Price: Float, lastKey: String, limit: Int): GetProductsResult!
+  getTaxonomiesByParent(ParentId: ID!): GetTaxonomiesByParentResult!
+  getTaxonomy(TaxonomyId: ID!): GetTaxonomyResult!
+}
+
+type Taxonomy {
+  Description: String
+  Name: String!
+  ParentId: ID
+  TaxonomyId: ID!
+  Type: String!
+}
+
+#  Object Wrappers
+type TaxonomyList {
+  taxonomies: [Taxonomy]!
+}
