@@ -23,6 +23,7 @@ describe("getProduct Lambda function", () => {
     const result = await handler(event);
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body)).toEqual({
+      __typename: "Product",
       ProductId: "exist",
       Name: "Existing Product",
     });
@@ -32,7 +33,7 @@ describe("getProduct Lambda function", () => {
     const event = { arguments: JSON.stringify({ ProductId: "nonexistent" }) };
     const result = await handler(event);
     expect(result.statusCode).toBe(404);
-    expect(JSON.parse(result.body)).toEqual({ error: "Product not found" });
+    expect(JSON.parse(result.body)).toEqual({ __typename: 'APIError', error: "Product not found" });
   });
 
   test("should return 500 when an error occurs", async () => {
@@ -44,6 +45,7 @@ describe("getProduct Lambda function", () => {
     const result = await handler(event);
     expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body)).toEqual({
+      __typename: 'APIError',
       error: "Could not retrieve product",
     });
   });
